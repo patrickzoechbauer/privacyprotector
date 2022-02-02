@@ -7,8 +7,9 @@ from pathlib import Path
 nltk.download('punkt')
 
 
-
+#this will be folder name of files to convert
 read_path = 'five_sample'
+#this will be where the converted .txt files are kept
 write_path = 'five_chunked'
 
 for filename in os.listdir(read_path):
@@ -18,28 +19,36 @@ for filename in os.listdir(read_path):
         writing_file = os.path.join(write_path,str(Path(filename).stem + '.txt'))
         w_file = open(writing_file, "w")
         text = f.read()
-        html = markdown.markdown(text)
+        headeronly = True
         buffer = []
         index = 0
+        html = markdown.markdown(text)
+        print(html)
         soup = BeautifulSoup(html, 'html.parser')
 
         for child in soup.contents:
             if child.name != 'blockquote':
-                if child.name in ['h1','h2','h3']:
-                    if buffer:
+                if child.name in ['h1','h2','h3','h4','h5']:
+                    if not(headeronly):
                         w_file.write('EXCERPT: ' + str(index) + '\n')
+                        index += 1
+                        print(buffer, '\n', '\n')
                         w_file.writelines(buffer)
                         w_file.write('\n ********************************* \n')
-                    buffer = []
-                    index += 1
+                        buffer, headeronly = [], True
+                    buffer.append(child.get_text())
+                elif (child.get_text() == '\n'):
                     buffer.append(child.get_text())
                 else:
+                    headeronly = False
                     temp_text = child.get_text()
                     buffer.append(temp_text)
-                    if len(temp_text) > 700:
+                    if len(temp_text) > 500:
                         w_file.write('EXCERPT: ' + str(index) + '\n')
+                        index += 1
+                        print(buffer, '\n', '\n')
                         w_file.writelines(buffer)
                         w_file.write('\n ********************************* \n')
-                        buffer = []
-                        index += 1
+                        buffer, headeronly = [], True
         w_file.close()
+
