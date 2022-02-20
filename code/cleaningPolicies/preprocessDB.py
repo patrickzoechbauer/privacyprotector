@@ -4,13 +4,16 @@ import nltk, markdown, os
 from bs4 import BeautifulSoup, SoupStrainer
 from nltk import word_tokenize
 from pathlib import Path
+import pickle
 nltk.download('punkt')
 
 
 #this will be folder name of files to convert
-read_path = 'five_sample'
+read_path = 'sample'
 #this will be where the converted .txt files are kept
-write_path = 'five_chunked'
+write_path = 'chunked'
+
+output_dict = {}
 
 for filename in os.listdir(read_path):
     working_file = os.path.join(read_path,filename)
@@ -18,6 +21,7 @@ for filename in os.listdir(read_path):
     with open(working_file, 'r') as f:
         print(filename)
         if('.md' in filename):
+            output_dict[filename] = []
             writing_file = os.path.join(write_path,str(Path(filename).stem + '.txt'))
             w_file = open(writing_file, "w")
             text = f.read()
@@ -37,6 +41,7 @@ for filename in os.listdir(read_path):
                             #print(buffer, '\n', '\n')
                             w_file.writelines(buffer)
                             w_file.write('\n ********************************* \n')
+                            output_dict[filename].append((index, buffer))
                             buffer, headeronly = [], True
                         buffer.append(child.get_text())
                     elif (child.get_text() == '\n'):
@@ -51,6 +56,9 @@ for filename in os.listdir(read_path):
                             #print(buffer, '\n', '\n')
                             w_file.writelines(buffer)
                             w_file.write('\n ********************************* \n')
+                            output_dict[filename].append((index, buffer))
                             buffer, headeronly = [], True
             w_file.close()
 
+with open('labeledData.pickle', 'wb') as handle:
+    pickle.dump(output_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
