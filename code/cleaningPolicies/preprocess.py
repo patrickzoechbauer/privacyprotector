@@ -8,9 +8,9 @@ nltk.download('punkt')
 
 
 #this will be folder name of files to convert
-read_path = 'five_sample'
+read_path = 'sample'
 #this will be where the converted .txt files are kept
-write_path = 'five_chunked'
+write_path = 'chunked'
 
 for filename in os.listdir(read_path):
     working_file = os.path.join(read_path,filename)

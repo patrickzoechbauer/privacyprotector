@@ -37,12 +37,12 @@ for filename in os.listdir(read_path):
                     if child.name in ['h1','h2','h3','h4','h5']:
                         if not(headeronly):
                             w_file.write('EXCERPT: ' + str(index) + '\n')
-                            index += 1
                             #print(buffer, '\n', '\n')
                             w_file.writelines(buffer)
                             w_file.write('\n ********************************* \n')
                             output_dict[filename].append((index, buffer))
                             buffer, headeronly = [], True
+                            index += 1
                         buffer.append(child.get_text())
                     elif (child.get_text() == '\n'):
                         buffer.append(child.get_text())
@@ -52,13 +52,16 @@ for filename in os.listdir(read_path):
                         buffer.append(temp_text)
                         if len(temp_text) > 500:
                             w_file.write('EXCERPT: ' + str(index) + '\n')
-                            index += 1
+                            
                             #print(buffer, '\n', '\n')
                             w_file.writelines(buffer)
                             w_file.write('\n ********************************* \n')
                             output_dict[filename].append((index, buffer))
                             buffer, headeronly = [], True
+                            index += 1
             w_file.close()
+
+#print(output_dict['perezitos.com.md'])
 
 with open('labeledData.pickle', 'wb') as handle:
     pickle.dump(output_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

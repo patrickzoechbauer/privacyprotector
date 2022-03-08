@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FlaskApp</title>
+    <title>Compl_AI</title>
 </head>
 <body>
-    <h1>Output:</h1>
-
     {% if output %}
-    <p>Paragraph covers "Storage limitation"</p>
+    <h1>Paragraph covers "Storage limitation"</h1>
+    <p>Ambiguity score: {{amb}}</p>
+    <p>Level of confidency: {{conf}}</p>
+    <p><img src="{{url_for('static', filename='traffic-light-green.jpg')}}"/></p>
+    <br>
     {% else %}
-    <p>Paragraph is not related to "Storage limitation"</p>
+    <h1>Paragraph does not cover "storage limitation" according to GDPR</h1>
+    <p><img src="{{url_for('static', filename='traffic-light-red.jpg')}}"/></p>
+    <br>
     {% endif %}
-
+    <p><a href="{{ url_for('form') }}">Go back to form</a></p>
 </body>
 </html>

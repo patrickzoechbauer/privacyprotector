@@ -2,6 +2,7 @@ from flask import Flask,render_template,request
 import nltk, string
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
+import numpy as np
 
 nltk.download('punkt') # if necessary...
 
@@ -28,6 +29,7 @@ def calc_bestfit(example, labels):
                 bestfit['file'] = file
                 bestfit['label'] = labels[file].loc[para, 'LABEL']
                 bestfit['PARAGRAPH'] = labels[file].loc[para, 'PARAGRAPH']
+                bestfit['AMBIGUITY'] = labels[file].loc[para, 'AMBIGUITY']
     return bestfit
 
 vectorizer = TfidfVectorizer(tokenizer=normalize, stop_words='english')
@@ -50,7 +52,7 @@ def data():
         return f"The URL /data is accessed directly. Try going to '/form' to submit form"
     if request.method == 'POST':
         form_data = request.form
-        output = False        
+        output_flag = False
 
         for index, paragraph in form_data.items():
 
@@ -58,8 +60,10 @@ def data():
             print(analysis)
 
             if analysis['label'] == 1:
-                output = True
+                output_flag = True
 
-        return render_template('output.html',output = True)
+        return render_template('output.html',output = output_flag,
+                                amb = analysis['AMBIGUITY'],
+                                conf = np.round(analysis['similarity'],2))
 
 
